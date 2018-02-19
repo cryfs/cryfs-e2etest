@@ -1,14 +1,17 @@
+import sys
 import traceback as _traceback
-from typing import List, Type, TypeVar, Awaitable, Optional
-from asyncio.futures import Future
-from types import TracebackType
-import sys, asyncio
+from typing import List, Type, TypeVar, Optional
 
+from types import TracebackType
+
+from cryfs.e2etest.fsmounter import CryfsMounter
+from cryfs.e2etest.utils.async_app import AsyncApp
+from cryfs.e2etest.compatibility_test import CompatibilityTests
 
 T = TypeVar('T')
 
 
-class Application(object):
+class Application(AsyncApp):
     def __init__(self, argv: List[str]) -> None:
         self.argv = argv
 
@@ -16,9 +19,8 @@ class Application(object):
     def setupUncaughtExceptionHandler(self) -> None:
         sys.excepthook = self._onUncaughtException
 
-    def run(self) -> int:
-        print("Hello world")
-        return 0
+    async def main(self) -> None:
+        await CompatibilityTests(CryfsMounter("/usr/local/bin/cryfs")).run()
 
     def _onUncaughtException(self, type_: Type[BaseException], value: BaseException, traceback: TracebackType) -> None:
         exception_msg = ''.join(_traceback.format_exception_only(type_, value))

@@ -20,3 +20,12 @@ $ rm -rf dist
 $ python setup.py sdist
 $ python setup.py bdist_wheel
 $ twine upload dist/*
+
+
+Creating new fixtures:
+-----------------------
+$ tar --preserve-permissions --atime-preserve -cJvf myfixture_cryfs_data.tar -C /path/to/datadir .
+$ cryfs /tmp/basedir /tmp/mountdir
+$ tar --preserve-permissions --atime-preserve --same-owner -C /tmp/mountdir -xvf myfixture_cryfs_data.tar
+$ fusermount -u /tmp/mountdir
+$ tar --preserve-permissions --atime-preserve -cvf myfixture_cryfs_encoded.tar -C /tmp/basedir .

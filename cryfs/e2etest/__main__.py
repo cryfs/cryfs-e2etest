@@ -1,12 +1,13 @@
-from cryfs.e2etest import Application
+from cryfs.e2etest import e2etest_app
 import sys
 
 
 def main() -> None:
-    Application.create_instance()
-    app = Application.get_instance()
+    e2etest_app.create_instance()
+    app = e2etest_app.get_instance()
     app.setupUncaughtExceptionHandler()
-    sys.exit(app.run())
+    app.start()
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

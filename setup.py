@@ -49,7 +49,7 @@ setup(name='cryfs-e2etest',
       },
       packages=find_packages(),
       package_data = {
-          'cryfs.e2etest.resources': [
+          'cryfs.e2etest.fixtures': [
               '*'
           ]
       },
