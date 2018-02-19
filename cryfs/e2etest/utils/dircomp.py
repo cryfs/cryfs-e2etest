@@ -30,6 +30,7 @@ def filesystem_node_equals(node1: str, node2: str) -> bool:
 def _attributes_equals(node1: str, node2: str) -> bool:
     stat1 = os.stat(node1)
     stat2 = os.stat(node2)
+    # TODO Compare more attributes (especially atime, mtime, ctime)
     #print("mode %s vs %s" % (stat1.st_mode, stat2.st_mode))
     #print("nlink %s vs %s" % (stat1.st_nlink, stat2.st_nlink))
     #print("uid %s vs %s" % (stat1.st_uid, stat2.st_uid))

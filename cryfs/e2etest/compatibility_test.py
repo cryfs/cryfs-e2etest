@@ -24,3 +24,5 @@ class CompatibilityTests(object):
             async with self.mounter.mount(basedir, fixture.password()) as mountdir:
                 if not dir_equals(datadir, mountdir):
                     print("Directories %s and %s aren't equal" % (datadir, mountdir))
+                    # TODO Instead of exit(1), we should accumulate errors and show at the end
+                    exit(1)

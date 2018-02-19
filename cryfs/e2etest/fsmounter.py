@@ -3,7 +3,7 @@ import tempfile
 from abc import ABCMeta, abstractmethod
 from types import TracebackType
 from cryfs.e2etest.utils.async_subprocess import check_call_subprocess
-from asyncio import subprocess
+import asyncio
 
 
 class _IMounterContext(object, metaclass=ABCMeta):
@@ -34,6 +34,7 @@ class _CryfsMounterContext(_IMounterContext):
 
     async def __aexit__(self, exc_type: Optional[type], exc: Optional[BaseException], tb: Optional[TracebackType]) -> None:
         await check_call_subprocess("/bin/fusermount", "-u", self.tempdir.name)
+        await _wait_until_unmounted(self.tempdir.name)
         self.tempdir.cleanup()
 
 
@@ -43,3 +44,9 @@ class CryfsMounter(IFsMounter):
 
     def mount(self, basedir: str, password: bytes) -> _CryfsMounterContext:
         return _CryfsMounterContext(cryfs_binary=self.cryfs_binary, basedir=basedir, password=password)
+
+
+async def _wait_until_unmounted(dir: str) -> None:
+    mounted_dirs = await check_call_subprocess("mount")
+    while dir.encode("UTF-8") in mounted_dirs:
+        await asyncio.sleep(0.001)
