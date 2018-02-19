@@ -1,0 +1,53 @@
+version: 2.0
+
+references:
+  init_virtualenv: &init_virtualenv
+    run:
+      name: Initialize virtualenv
+      command: |
+        sudo pip install virtualenv
+        virtualenv -p /usr/local/bin/python3 virtualenv
+  restore_dependency_cache: &restore_dependency_cache
+    restore_cache:
+      key: deps-{{ checksum "setup.py" }}
+  install: &install
+    run:
+      name: Install
+      command: |
+        source virtualenv/bin/activate
+        pip install -e .
+  save_dependency_cache: &save_dependency_cache
+    save_cache:
+      key: deps-{{ checksum "setup.py" }}
+      paths:
+        - "virtualenv"
+  enable_for_tags: &enable_for_tags
+    filters:
+      tags:
+        only: /.*/
+
+jobs:
+  mypy:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+      - <<: *restore_dependency_cache
+      - <<: *init_virtualenv
+      - <<: *restore_dependency_cache
+      - <<: *install
+      - <<: *save_dependency_cache
+      - run:
+          name: MyPy
+          command: |
+            source virtualenv/bin/activate
+            python3 setup.py mypy
+
+workflows:
+  version: 2
+
+  ci:
+    jobs:
+    - mypy:
+        <<: *enable_for_tags
+
