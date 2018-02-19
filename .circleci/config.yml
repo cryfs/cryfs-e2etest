@@ -42,6 +42,21 @@ jobs:
           command: |
             source virtualenv/bin/activate
             python3 setup.py mypy
+  unit_tests:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+      - <<: *restore_dependency_cache
+      - <<: *init_virtualenv
+      - <<: *restore_dependency_cache
+      - <<: *install
+      - <<: *save_dependency_cache
+      - run:
+          name: MyPy
+          command: |
+            source virtualenv/bin/activate
+            python3 setup.py test
 
 workflows:
   version: 2
@@ -50,4 +65,5 @@ workflows:
     jobs:
     - mypy:
         <<: *enable_for_tags
-
+    - unit_tests:
+        <<: *enable_for_tags
