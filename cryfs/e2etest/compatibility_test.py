@@ -80,7 +80,7 @@ class CompatibilityTests(object):
         try:
             async with fixture.unpack_encoded() as basedir, fixture.unpack_data() as datadir:
                 async with self.mounter.mount(basedir, fixture.password(), logger) as mountdir:
-                    if not dir_equals(datadir, mountdir):
+                    if not dir_equals(datadir, mountdir, logger):
                         logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
             # Unroll the with statements before returning because they might add something to the logger
             return TestResult(fixture=fixture, log=logger)
