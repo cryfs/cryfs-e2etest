@@ -73,7 +73,6 @@ class CompatibilityTests(object):
         try:
             async with fixture.unpack_encoded() as basedir, fixture.unpack_data() as datadir:
                 async with self.mounter.mount(basedir, fixture.password(), logger) as mountdir:
-                    input("%s: %s" % (fixture._encoded_tar.tar_path, basedir))
                     if not dir_equals(datadir, mountdir):
                         logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
                         return TestResult(status=TestStatus.ERROR, fixture=fixture, log=logger)
