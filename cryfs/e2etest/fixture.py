@@ -1,6 +1,7 @@
 from typing import Optional
 from types import TracebackType
 import tempfile
+import pkg_resources
 from cryfs.e2etest.utils.async_subprocess import check_call_subprocess
 
 
@@ -28,8 +29,10 @@ class TarUnpacker(object):
 
 class Fixture(object):
     def __init__(self, data: str, encoded: str, password: bytes) -> None:
-        self._data_tar = TarFile(data)
-        self._encoded_tar = TarFile(encoded)
+        data_file = pkg_resources.resource_filename(__name__, data)
+        encoded_file = pkg_resources.resource_filename(__name__, encoded)
+        self._data_tar = TarFile(data_file)
+        self._encoded_tar = TarFile(encoded_file)
         self._password = password
 
     def unpack_data(self) -> TarUnpacker:

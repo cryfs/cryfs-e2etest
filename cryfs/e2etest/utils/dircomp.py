@@ -6,6 +6,7 @@ class FilesystemException(Exception):
     def __init__(self, message: str) -> None:
         self._message = message
 
+
     def message(self) -> str:
         return self._message
 
