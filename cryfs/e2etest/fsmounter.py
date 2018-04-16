@@ -29,6 +29,7 @@ class _CryfsMounterContext(_IMounterContext):
         self.logfile = tempfile.NamedTemporaryFile()
         out = await check_call_subprocess(self.cryfs_binary, self.basedir, self.tempdir.name,
                                           "--allow-filesystem-upgrade", "--logfile", self.logfile.name,
+                                          "--no-integrity-checks", # TODO With integrity checks, it fails on the second run because it's essentially a rollback. Can we reset cryfs state before running and enable integrity checks?
                                           input=self.password, env={
             "CRYFS_FRONTEND": "noninteractive",
             "CRYFS_NO_UPDATE_CHECK": "true",
