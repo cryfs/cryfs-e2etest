@@ -1,5 +1,6 @@
 from cryfs.e2etest.utils.logger import Logger, LogLevel
 
+
 def test_logger() -> None:
     logger = Logger()
     logger.log(LogLevel.INFO, "Message 1")

@@ -6,7 +6,7 @@ from types import TracebackType
 
 from cryfs.e2etest.fsmounter import CryfsMounter
 from cryfs.e2etest.utils.async_app import AsyncApp
-from cryfs.e2etest.compatibility_test import CompatibilityTests
+from cryfs.e2etest.compatibility_test import CompatibilityTests, TestStatus
 
 T = TypeVar('T')
 
@@ -20,7 +20,9 @@ class Application(AsyncApp):
         sys.excepthook = self._onUncaughtException
 
     async def main(self) -> None:
-        await CompatibilityTests(CryfsMounter("/usr/local/bin/cryfs")).run()
+        test_status = await CompatibilityTests(CryfsMounter("/usr/local/bin/cryfs")).run()
+        if test_status != TestStatus.SUCCESS:
+            exit(1)
 
     def _onUncaughtException(self, type_: Type[BaseException], value: BaseException, traceback: TracebackType) -> None:
         exception_msg = ''.join(_traceback.format_exception_only(type_, value))

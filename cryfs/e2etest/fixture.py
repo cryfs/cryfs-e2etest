@@ -31,6 +31,8 @@ class Fixture(object):
     def __init__(self, data: str, encoded: str, password: bytes) -> None:
         data_file = pkg_resources.resource_filename(__name__, data)
         encoded_file = pkg_resources.resource_filename(__name__, encoded)
+        self._data = data
+        self._encoded = encoded
         self._data_tar = TarFile(data_file)
         self._encoded_tar = TarFile(encoded_file)
         self._password = password
@@ -43,3 +45,6 @@ class Fixture(object):
 
     def password(self) -> bytes:
         return self._password
+
+    def name(self) -> str:
+        return self._data + " : " + self._encoded

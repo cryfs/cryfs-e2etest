@@ -8,12 +8,14 @@ class LogLevel(Enum):
     INFO = 1
     WARNING = 2
     ERROR = 3
+    FATAL = 4
 
     def to_string(self) -> str:
         return {
             LogLevel.INFO: "INFO",
             LogLevel.WARNING: "WARNING",
             LogLevel.ERROR: "ERROR",
+            LogLevel.FATAL: "FATAL",
         }[self]
 
 

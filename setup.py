@@ -27,7 +27,9 @@ class MypyCommand(Command):
 
 
 dependencies = [
-  'mypy == 0.560',
+  # TODO Check if config flags needs to be changed (was setup for mypy 0.560)
+  'mypy == 0.590',
+  'attrs == v17.4.0',
 ]
 
 test_dependencies = [
