@@ -12,6 +12,14 @@ fixtures = [Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.8_encoded.tar",
     password=b"mypassword"
+), Fixture(
+    data="fixtures/scrypt_data.tar",
+    encoded="fixtures/scrypt_cryfs0.9.9_encoded.tar",
+    password=b"mypassword"
+), Fixture(
+    data="fixtures/scrypt_data.tar",
+    encoded="fixtures/scrypt_cryfs0.10-m2+188.gfc71242e_encoded.tar",
+    password=b"mypassword"
 )]
 
 
