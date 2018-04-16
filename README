@@ -26,6 +26,7 @@ Creating new fixtures:
 -----------------------
 $ tar --preserve-permissions --atime-preserve -cJvf myfixture_cryfs_data.tar -C /path/to/datadir .
 $ cryfs /tmp/basedir /tmp/mountdir
-$ tar --preserve-permissions --atime-preserve --same-owner -C /tmp/mountdir -xvf myfixture_cryfs_data.tar
+# TODO use --same-owner, but then the test cases need sudo rights ... :(
+$ tar --preserve-permissions --atime-preserve -C /tmp/mountdir -xvf myfixture_cryfs_data.tar
 $ fusermount -u /tmp/mountdir
 $ tar --preserve-permissions --atime-preserve -cvf myfixture_cryfs_encoded.tar -C /tmp/basedir .
