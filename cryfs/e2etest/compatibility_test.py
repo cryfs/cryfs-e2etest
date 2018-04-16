@@ -42,9 +42,16 @@ class TestStatus(Enum):
 
 @attr.s(auto_attribs=True)
 class TestResult(object):
-    status: TestStatus
     fixture: Fixture
     log: Logger
+
+    def status(self) -> TestStatus:
+        if self.log.contains_entry_with_level(LogLevel.FATAL):
+            return TestStatus.FATAL
+        elif self.log.contains_entry_with_level(LogLevel.ERROR):
+            return TestStatus.ERROR
+        else:
+            return TestStatus.SUCCESS
 
 
 class CompatibilityTests(object):
@@ -54,9 +61,9 @@ class CompatibilityTests(object):
     async def run(self) -> TestStatus:
         results = await asyncio.gather(*[self.test_reads_correctly(fixture) for fixture in fixtures])
         for result in results:
-            print("[%s] %s" % (result.status.to_string(), result.fixture.name()))
-        fatalled = [r for r in results if r.status == TestStatus.FATAL]
-        errored = [r for r in results if r.status == TestStatus.ERROR]
+            print("[%s] %s" % (result.status().to_string(), result.fixture.name()))
+        fatalled = [r for r in results if r.status() == TestStatus.FATAL]
+        errored = [r for r in results if r.status() == TestStatus.ERROR]
         for result in fatalled:
             self._print_result(result)
         for result in errored:
@@ -75,15 +82,15 @@ class CompatibilityTests(object):
                 async with self.mounter.mount(basedir, fixture.password(), logger) as mountdir:
                     if not dir_equals(datadir, mountdir):
                         logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
-                        return TestResult(status=TestStatus.ERROR, fixture=fixture, log=logger)
-            return TestResult(status=TestStatus.SUCCESS, fixture=fixture, log=logger)
+            # Unroll the with statements before returning because they might add something to the logger
+            return TestResult(fixture=fixture, log=logger)
         except Exception as e:
             logger.log(LogLevel.FATAL, "Exception: " + str(e))
-            return TestResult(status=TestStatus.FATAL, fixture=fixture, log=logger)
+            return TestResult(fixture=fixture, log=logger)
 
     def _print_result(self, result: TestResult) -> None:
         print("-------------------------")
-        print("Detailed result for [%s] %s" % (result.status.to_string(), result.fixture.name()))
+        print("Detailed result for [%s] %s" % (result.status().to_string(), result.fixture.name()))
         print("-------------------------")
         print(result.log.to_string())
         print()

@@ -35,5 +35,9 @@ class Logger(object):
     def log(self, level: LogLevel, message: str) -> None:
         self._log.append(LogEntry(level=level, message=message))
 
+    def contains_entry_with_level(self, level: LogLevel) -> bool:
+        filtered = [entry for entry in self._log if entry.level == level]
+        return len(filtered) != 0
+
     def to_string(self) -> str:
         return reduce(lambda s, i: s + i.to_string() + "\n", self._log, "")

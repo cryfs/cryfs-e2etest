@@ -34,12 +34,13 @@ class _CryfsMounterContext(_IMounterContext):
             "CRYFS_NO_UPDATE_CHECK": "true",
         })
         if self.logger is not None:
-            self.logger.log(LogLevel.INFO, "CryFS stdout:\n%s" % out.decode('UTF-8'))
+            self.logger.log(LogLevel.INFO, "CryFS stdout:\n%s" % out.stdout.decode('UTF-8'))
+            self.logger.log(LogLevel.INFO, "CryFS stderr:\n%s" % out.stderr.decode('UTF-8'))
 
         return self.tempdir.name
 
     async def __aexit__(self, exc_type: Optional[type], exc: Optional[BaseException], tb: Optional[TracebackType]) -> None:
-        await check_call_subprocess("/bin/fusermount", "-u", self.tempdir.name)
+        await check_call_subprocess("/bin/fusermount", "-u", self.tempdir.name, logger=self.logger, throw_on_error=False)
         await _wait_until_unmounted(self.tempdir.name)
         if self.logger is not None:
             with open(self.logfile.name, 'r') as logfile:
@@ -58,5 +59,5 @@ class CryfsMounter(IFsMounter):
 
 async def _wait_until_unmounted(dir: str) -> None:
     mounted_dirs = await check_call_subprocess("mount")
-    while dir.encode("UTF-8") in mounted_dirs:
+    while dir.encode("UTF-8") in mounted_dirs.stdout:
         await asyncio.sleep(0.001)
