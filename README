@@ -24,7 +24,9 @@ $ twine upload dist/*
 
 Creating new fixtures:
 -----------------------
+1. Create plaintext tar fixture
 $ tar --preserve-permissions --atime-preserve -cJvf myfixture_cryfs_data.tar -C /path/to/datadir .
+2. Create ciphertext tar fixture
 $ cryfs /tmp/basedir /tmp/mountdir
 # TODO use --same-owner, but then the test cases need sudo rights ... :(
 $ tar --preserve-permissions --atime-preserve -C /tmp/mountdir -xvf myfixture_cryfs_data.tar

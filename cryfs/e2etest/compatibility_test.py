@@ -10,6 +10,10 @@ from cryfs.e2etest.utils.logger import Logger, LogLevel
 
 fixtures = [Fixture(
     data="fixtures/scrypt_data.tar",
+    encoded="fixtures/scrypt_cryfs0.9.7_encoded.tar",
+    password=b"mypassword"
+), Fixture(
+    data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.8_encoded.tar",
     password=b"mypassword"
 ), Fixture(
