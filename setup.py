@@ -30,6 +30,7 @@ dependencies = [
   # TODO Check if config flags needs to be changed (was setup for mypy 0.560)
   'mypy == 0.590',
   'attrs == v17.4.0',
+  'click == 6.7',
 ]
 
 test_dependencies = [
@@ -57,7 +58,9 @@ setup(name='cryfs-e2etest',
       },
       entry_points = {
         'console_scripts': [
-          'cryfs-e2etest = cryfs.e2etest.__main__:main'
+          'cryfs-e2etest = cryfs.e2etest.__main__:main',
+          'cryfs-e2etest-create-data-tar = cryfs.e2etest.create_fixture:create_data_tar',
+          'cryfs-e2etest-create-encoded-tar = cryfs.e2etest.create_fixture:create_encoded_tar',
         ]
       },
       install_requires=dependencies,

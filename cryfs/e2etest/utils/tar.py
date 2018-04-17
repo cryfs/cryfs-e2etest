@@ -12,6 +12,14 @@ class TarFile(object):
         # Use --same-owner, but that needs sudo
         await check_call_subprocess("tar", "--preserve-permissions", "--atime-preserve", "-C", dest_path, "-xvf", self.tar_path)
 
+    async def pack(self, source_path: str, compress: bool = False) -> None:
+        # Use --same-owner, but that needs sudo
+        if compress:
+            args = "-cJvf"
+        else:
+            args = "-cvf"
+        await check_call_subprocess("tar", "--preserve-permissions", "--atime-preserve", args, self.tar_path, "-C", source_path, ".")
+
 
 class TarUnpacker(object):
     def __init__(self, tar_file: TarFile) -> None:

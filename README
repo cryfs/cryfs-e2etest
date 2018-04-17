@@ -1,7 +1,7 @@
 Initialize dev environment:
 ----------------------
 1) Create virtualenv
-   $ virtualenv -p /usr/bin/python3.5 virtualenv
+   $ virtualenv -p /usr/bin/python3.6 virtualenv
    $ source virtualenv/bin/activate
 
 2) Install packages
@@ -25,10 +25,6 @@ $ twine upload dist/*
 Creating new fixtures:
 -----------------------
 1. Create plaintext tar fixture
-$ tar --preserve-permissions --atime-preserve -cJvf myfixture_cryfs_data.tar -C /path/to/datadir .
+$ cryfs-e2etest-create-data-tar /path/to/datadir myfixture_data.tar
 2. Create ciphertext tar fixture
-$ cryfs /tmp/basedir /tmp/mountdir
-# TODO use --same-owner, but then the test cases need sudo rights ... :(
-$ tar --preserve-permissions --atime-preserve -C /tmp/mountdir -xvf myfixture_cryfs_data.tar
-$ fusermount -u /tmp/mountdir
-$ tar --preserve-permissions --atime-preserve -cvf myfixture_cryfs_encoded.tar -C /tmp/basedir .
+$ cryfs-e2etest-create-encoded-tar myfixture_data.tar myfixture_cryfs_encoded.tar --cryfs-executable=/usr/local/bin/cryfs
