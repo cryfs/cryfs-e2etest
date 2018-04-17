@@ -6,7 +6,7 @@ from types import TracebackType
 from cryfs.e2etest.fsmounter import CryfsMounter
 from cryfs.e2etest.utils.async_app import AsyncApp
 from cryfs.e2etest.test_framework.result import TestStatus, TestResult, TestResults
-from cryfs.e2etest.test_framework.test_case import ITestCase
+from cryfs.e2etest.test_framework.test_case import ITestCase, ITestSuite
 from cryfs.e2etest.compatibility_test import CompatibilityTests
 from cryfs.e2etest.readwrite_test import ReadWriteTests
 from cryfs.e2etest.test_framework.logger import Logger, LogLevel
@@ -25,13 +25,16 @@ class Application(AsyncApp):
 
     async def main(self) -> None:
         mounter = CryfsMounter("/usr/local/bin/cryfs")
-        test_cases = [self._run_case(case) for case in CompatibilityTests(mounter).test_cases()] + \
-                     [self._run_case(case) for case in ReadWriteTests(mounter).test_cases()]
-        results = await asyncio.gather(*test_cases)
+        suites = [CompatibilityTests(mounter), ReadWriteTests(mounter)]
+        test_cases = self._test_cases_from_suites(suites)
+        results = await asyncio.gather(*[self._run_case(case) for case in test_cases])
         result = TestResults(results)
         result.print()
         if result.status() != TestStatus.SUCCESS:
             exit(1)
+
+    def _test_cases_from_suites(self, suites: List[ITestSuite]) -> List[ITestCase]:
+        return [case for suite in suites for case in suite.test_cases()]
 
     async def _run_case(self, case: ITestCase) -> TestResult:
         logger = Logger()
