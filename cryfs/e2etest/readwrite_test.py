@@ -7,7 +7,7 @@ from cryfs.e2etest.utils.tar import TarFile, TarUnpacker
 from cryfs.e2etest.fsmounter import IFsMounter
 from cryfs.e2etest.test_framework.test_case import ITestSuite, ITestCase
 from cryfs.e2etest.test_framework.logger import Logger, LogLevel
-from cryfs.e2etest.utils.dircomp import dir_equals
+from cryfs.e2etest.test_framework.dircomp import expect_dir_equals
 
 
 class Fixture(object):
@@ -47,13 +47,11 @@ class ReadWriteTests(ITestSuite):
                     async with self.mounter.mount(basedir, password, logger) as mountdir:
                         _mountdir = os.path.join(mountdir, 'contents')
                         shutil.copytree(datadir, _mountdir, symlinks=True)
-                        if not dir_equals(datadir, _mountdir, logger):
-                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                        expect_dir_equals(datadir, _mountdir, logger)
                     # unmount and remount, then test again
                     async with self.mounter.mount(basedir, password, logger) as mountdir:
                         _mountdir = os.path.join(mountdir, 'contents')
-                        if not dir_equals(datadir, _mountdir, logger):
-                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                        expect_dir_equals(datadir, _mountdir, logger)
 
         def name(self) -> str:
             return "ReadWriteTest.copy_and_read: %s" % self.fixture.name()
@@ -69,12 +67,10 @@ class ReadWriteTests(ITestSuite):
                 async with self.fixture.unpack_data() as datadir:
                     async with self.mounter.mount(basedir, password, logger) as mountdir:
                         await self.fixture.unpack_data_to(mountdir)
-                        if not dir_equals(datadir, mountdir, logger):
-                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                        expect_dir_equals(datadir, mountdir, logger)
                     # unmount and remount, then test again
                     async with self.mounter.mount(basedir, password, logger) as mountdir:
-                        if not dir_equals(datadir, mountdir, logger):
-                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                        expect_dir_equals(datadir, mountdir, logger)
 
         def name(self) -> str:
             return "ReadWriteTest.untar_and_read: %s" % self.fixture.name()

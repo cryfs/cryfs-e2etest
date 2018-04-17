@@ -2,7 +2,7 @@
 
 from typing import List
 import pkg_resources
-from cryfs.e2etest.utils.dircomp import dir_equals
+from cryfs.e2etest.test_framework.dircomp import expect_dir_equals
 from cryfs.e2etest.fsmounter import IFsMounter
 from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 from cryfs.e2etest.utils.tar import TarFile, TarUnpacker
@@ -67,8 +67,7 @@ class CompatibilityTests(ITestSuite):
         async def run(self, logger: Logger) -> None:
             async with self.fixture.unpack_encoded() as basedir, self.fixture.unpack_data() as datadir:
                 async with self.mounter.mount(basedir, self.fixture.password(), logger) as mountdir:
-                    if not dir_equals(datadir, mountdir, logger):
-                        logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                    expect_dir_equals(datadir, mountdir, logger)
 
         def name(self) -> str:
             return "CompatibilityTest: %s" % self.fixture.name()
