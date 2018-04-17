@@ -1,13 +1,12 @@
 # Test that the current version of CryFS can still load old versions
 
-import asyncio
-import attr
+from typing import List
 import pkg_resources
-from cryfs.e2etest.utils.status import TestStatus, TestResult, TestResults
 from cryfs.e2etest.utils.dircomp import dir_equals
 from cryfs.e2etest.fsmounter import IFsMounter
 from cryfs.e2etest.utils.logger import Logger, LogLevel
 from cryfs.e2etest.utils.tar import TarFile, TarUnpacker
+from cryfs.e2etest.utils.test_framework import ITestSuite, ITestCase
 
 
 class Fixture(object):
@@ -56,23 +55,23 @@ fixtures = [Fixture(
 )]
 
 
-class CompatibilityTests(object):
+class CompatibilityTests(ITestSuite):
     def __init__(self, mounter: IFsMounter) -> None:
         self.mounter = mounter
 
-    async def run(self) -> TestResults:
-        results = await asyncio.gather(*[self._test(fixture) for fixture in fixtures])
-        return TestResults(results)
+    class _CompatibilityTest(ITestCase):
+        def __init__(self, fixture: Fixture, mounter: IFsMounter) -> None:
+            self.fixture = fixture
+            self.mounter = mounter
 
-    async def _test(self, fixture: Fixture) -> TestResult:
-        logger = Logger()
-        try:
-            async with fixture.unpack_encoded() as basedir, fixture.unpack_data() as datadir:
-                async with self.mounter.mount(basedir, fixture.password(), logger) as mountdir:
+        async def run(self, logger: Logger) -> None:
+            async with self.fixture.unpack_encoded() as basedir, self.fixture.unpack_data() as datadir:
+                async with self.mounter.mount(basedir, self.fixture.password(), logger) as mountdir:
                     if not dir_equals(datadir, mountdir, logger):
                         logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
-            # Unroll the with statements before returning because they might add something to the logger
-            return TestResult(fixture_name="CompatibilityTest: %s" % fixture.name(), log=logger)
-        except Exception as e:
-            logger.log(LogLevel.FATAL, "Exception: " + str(e))
-            return TestResult(fixture_name="CompatibilityTest: %s" % fixture.name(), log=logger)
+
+        def name(self) -> str:
+            return "CompatibilityTest: %s" % self.fixture.name()
+
+    def test_cases(self) -> List[ITestCase]:
+        return [self._CompatibilityTest(fixture, self.mounter) for fixture in fixtures]

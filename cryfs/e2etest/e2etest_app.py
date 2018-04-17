@@ -5,9 +5,11 @@ import asyncio
 from types import TracebackType
 from cryfs.e2etest.fsmounter import CryfsMounter
 from cryfs.e2etest.utils.async_app import AsyncApp
-from cryfs.e2etest.utils.status import TestStatus, merge_results
+from cryfs.e2etest.utils.status import TestStatus, TestResult, TestResults
+from cryfs.e2etest.utils.test_framework import ITestCase
 from cryfs.e2etest.compatibility_test import CompatibilityTests
 from cryfs.e2etest.readwrite_test import ReadWriteTests
+from cryfs.e2etest.utils.logger import Logger, LogLevel
 
 
 T = TypeVar('T')
@@ -23,14 +25,22 @@ class Application(AsyncApp):
 
     async def main(self) -> None:
         mounter = CryfsMounter("/usr/local/bin/cryfs")
-        results = await asyncio.gather(
-            CompatibilityTests(mounter).run(),
-            ReadWriteTests(mounter).run(),
-        )
-        result = merge_results(results)
+        test_cases = [self._run_case(case) for case in CompatibilityTests(mounter).test_cases()] + \
+                     [self._run_case(case) for case in ReadWriteTests(mounter).test_cases()]
+        results = await asyncio.gather(*test_cases)
+        result = TestResults(results)
         result.print()
         if result.status() != TestStatus.SUCCESS:
             exit(1)
+
+    async def _run_case(self, case: ITestCase) -> TestResult:
+        logger = Logger()
+        try:
+            await case.run(logger)
+        except Exception as e:
+            logger.log(LogLevel.FATAL, "Exception: " + str(e))
+        return TestResult(test_case_name=case.name(), log=logger)
+
 
     def _onUncaughtException(self, type_: Type[BaseException], value: BaseException, traceback: TracebackType) -> None:
         exception_msg = ''.join(_traceback.format_exception_only(type_, value))
