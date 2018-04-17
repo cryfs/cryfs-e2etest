@@ -6,7 +6,7 @@ from typing import List
 from cryfs.e2etest.utils.tar import TarFile, TarUnpacker
 from cryfs.e2etest.fsmounter import IFsMounter
 from cryfs.e2etest.test_framework.test_case import ITestSuite, ITestCase
-from cryfs.e2etest.test_framework.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger
 from cryfs.e2etest.test_framework.dircomp import expect_dir_equals
 
 
