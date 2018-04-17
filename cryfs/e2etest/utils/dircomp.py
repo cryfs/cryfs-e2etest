@@ -1,6 +1,6 @@
 import os, asyncio
 from functools import partial
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 
 
 class FilesystemException(Exception):

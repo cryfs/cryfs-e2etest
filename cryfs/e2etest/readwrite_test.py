@@ -5,8 +5,8 @@ import os
 from typing import List
 from cryfs.e2etest.utils.tar import TarFile, TarUnpacker
 from cryfs.e2etest.fsmounter import IFsMounter
-from cryfs.e2etest.utils.test_framework import ITestSuite, ITestCase
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.test_case import ITestSuite, ITestCase
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 from cryfs.e2etest.utils.dircomp import dir_equals
 
 

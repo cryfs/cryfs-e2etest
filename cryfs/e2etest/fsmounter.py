@@ -3,7 +3,7 @@ import tempfile
 from abc import ABCMeta, abstractmethod
 from types import TracebackType
 from cryfs.e2etest.utils.async_subprocess import check_call_subprocess
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 import asyncio
 
 

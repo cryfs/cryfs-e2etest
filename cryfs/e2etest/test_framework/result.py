@@ -1,7 +1,7 @@
 from enum import Enum
 import attr
 from typing import List
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 
 
 class TestStatus(Enum):

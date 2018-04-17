@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Iterable
-from cryfs.e2etest.utils.logger import Logger
+from cryfs.e2etest.test_framework.logger import Logger
 
 
 class ITestCase(object, metaclass=ABCMeta):

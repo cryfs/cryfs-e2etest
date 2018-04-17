@@ -1,4 +1,4 @@
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 
 
 def test_logger() -> None:

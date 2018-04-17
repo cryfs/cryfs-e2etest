@@ -5,11 +5,11 @@ import asyncio
 from types import TracebackType
 from cryfs.e2etest.fsmounter import CryfsMounter
 from cryfs.e2etest.utils.async_app import AsyncApp
-from cryfs.e2etest.utils.status import TestStatus, TestResult, TestResults
-from cryfs.e2etest.utils.test_framework import ITestCase
+from cryfs.e2etest.test_framework.result import TestStatus, TestResult, TestResults
+from cryfs.e2etest.test_framework.test_case import ITestCase
 from cryfs.e2etest.compatibility_test import CompatibilityTests
 from cryfs.e2etest.readwrite_test import ReadWriteTests
-from cryfs.e2etest.utils.logger import Logger, LogLevel
+from cryfs.e2etest.test_framework.logger import Logger, LogLevel
 
 
 T = TypeVar('T')
