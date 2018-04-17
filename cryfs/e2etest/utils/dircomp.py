@@ -18,6 +18,8 @@ class FilesystemException(Exception):
 #  - or both are directories and have same attributes and entries, which are also equal (recursively)
 def filesystem_node_equals(node1: str, node2: str, logger: Logger) -> bool:
     if not _attributes_equals(node1, node2):
+        import pdb
+        pdb.set_trace()
         logger.log(LogLevel.INFO, "Attributes different: %s and %s" % (node1, node2))
         return False
     # Need to check for symlinks first, because os.path.isdir and os.path.isfile return True for symlinks
@@ -59,8 +61,7 @@ def _attributes_equals(node1: str, node2: str) -> bool:
     #  and stat1.st_atime == stat2.st_atime \
     #  and stat1.st_mtime == stat2.st_mtime \
     #  and stat1.st_ctime == stat2.st_ctime
-    return stat1.st_nlink == stat2.st_nlink \
-      and stat1.st_uid == stat2.st_uid     \
+    return stat1.st_uid == stat2.st_uid     \
       and stat1.st_gid == stat2.st_gid     \
       and (os.path.isdir(node1) or stat1.st_size == stat2.st_size)
 
