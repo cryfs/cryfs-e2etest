@@ -20,6 +20,9 @@ class Fixture(object):
     def unpack_data(self) -> TarUnpacker:
         return TarUnpacker(self._data_tar)
 
+    async def unpack_data_to(self, dest_path: str) -> None:
+        await self._data_tar.unpack(dest_path)
+
     def name(self) -> str:
         return self._data
 
@@ -40,6 +43,7 @@ class ReadWriteTests(object):
     async def _test(self, fixture: Fixture) -> TestResults:
         results = await asyncio.gather(
             self._test_copy_and_read(fixture),
+            self._test_untar_and_read(fixture),
         )
         return TestResults(list(results))
 
@@ -60,7 +64,27 @@ class ReadWriteTests(object):
                         if not dir_equals(datadir, _mountdir, logger):
                             logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
             # Unroll the with statements before returning because they might add something to the logger
-            return TestResult(fixture_name="ReadWriteTest: %s" % fixture.name(), log=logger)
+            return TestResult(fixture_name="ReadWriteTest.copy_and_read: %s" % fixture.name(), log=logger)
         except Exception as e:
             logger.log(LogLevel.FATAL, "Exception: " + str(e))
-            return TestResult(fixture_name="ReadWriteTest: %s" % fixture.name(), log=logger)
+            return TestResult(fixture_name="ReadWriteTest.copy_and_read: %s" % fixture.name(), log=logger)
+
+    async def _test_untar_and_read(self, fixture: Fixture) -> TestResult:
+        logger = Logger()
+        password = b"mypassword"
+        try:
+            with tempfile.TemporaryDirectory() as basedir:
+                async with fixture.unpack_data() as datadir:
+                    async with self.mounter.mount(basedir, password, logger) as mountdir:
+                        await fixture.unpack_data_to(mountdir)
+                        if not dir_equals(datadir, mountdir, logger):
+                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+                    # unmount and remount, then test again
+                    async with self.mounter.mount(basedir, password, logger) as mountdir:
+                        if not dir_equals(datadir, mountdir, logger):
+                            logger.log(LogLevel.ERROR, "Directories %s and %s aren't equal" % (datadir, mountdir))
+            # Unroll the with statements before returning because they might add something to the logger
+            return TestResult(fixture_name="ReadWriteTest.untar_and_read: %s" % fixture.name(), log=logger)
+        except Exception as e:
+            logger.log(LogLevel.FATAL, "Exception: " + str(e))
+            return TestResult(fixture_name="ReadWriteTest.untar_and_read: %s" % fixture.name(), log=logger)
