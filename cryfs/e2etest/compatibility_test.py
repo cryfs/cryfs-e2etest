@@ -54,6 +54,10 @@ fixtures = [Fixture(
     password=b"mypassword",
 ), Fixture(
     data="fixtures/constructed_data.tar",
+    encoded="fixtures/constructed_cryfs0.9.6_encoded.tar",
+    password=b"mypassword",
+), Fixture(
+    data="fixtures/constructed_data.tar",
     encoded="fixtures/constructed_cryfs0.9.7_encoded.tar",
     password=b"mypassword",
 ), Fixture(
