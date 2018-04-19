@@ -35,23 +35,27 @@ class Fixture(object):
 fixtures = [Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.6_encoded.tar",
-    password=b"mypassword"
+    password=b"mypassword",
 ), Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.7_encoded.tar",
-    password=b"mypassword"
+    password=b"mypassword",
 ), Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.8_encoded.tar",
-    password=b"mypassword"
+    password=b"mypassword",
 ), Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.9.9_encoded.tar",
-    password=b"mypassword"
+    password=b"mypassword",
 ), Fixture(
     data="fixtures/scrypt_data.tar",
     encoded="fixtures/scrypt_cryfs0.10-m2+188.gfc71242e_encoded.tar",
-    password=b"mypassword"
+    password=b"mypassword",
+), Fixture(
+    data="fixtures/constructed_data.tar",
+    encoded="fixtures/constructed_cryfs0.10-m2+194.gb0077e7a_encoded.tar",
+    password=b"mypassword",
 )]
 
 
