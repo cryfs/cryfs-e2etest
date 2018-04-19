@@ -28,6 +28,8 @@ class Fixture(object):
 
 fixtures = [Fixture(
     data="fixtures/scrypt_data.tar",
+), Fixture(
+    data="fixtures/constructed_data.tar",
 )]
 
 
