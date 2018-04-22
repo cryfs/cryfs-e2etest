@@ -64,3 +64,5 @@ async def _wait_until_unmounted(dir: str) -> None:
     mounted_dirs = await check_call_subprocess("mount")
     while dir.encode("UTF-8") in mounted_dirs.stdout:
         await asyncio.sleep(0.001)
+    # Give the cryfs process some more time to exit and finish writing to the basedir
+    await asyncio.sleep(5)
