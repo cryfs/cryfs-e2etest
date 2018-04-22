@@ -41,7 +41,7 @@ class Application(AsyncApp):
         try:
             await case.run(logger)
         except Exception as e:
-            logger.log(LogLevel.FATAL, "Exception: " + str(e))
+            logger.log(LogLevel.FATAL, "Exception: " + _traceback.format_exc())
         return TestResult(test_case_name=case.name(), log=logger)
 
 
