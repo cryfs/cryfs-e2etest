@@ -30,7 +30,6 @@ class Application(AsyncApp):
         sys.excepthook = self._onUncaughtException
 
     async def main(self) -> None:
-        print(self.args.cryfs_executable)
         mounter = CryfsMounter(self.args.cryfs_executable)
         suites = [CompatibilityTests(mounter), ReadWriteTests(mounter)]
         test_cases = self._test_cases_from_suites(suites)
