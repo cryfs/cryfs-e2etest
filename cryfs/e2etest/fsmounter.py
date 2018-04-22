@@ -25,28 +25,30 @@ class _CryfsMounterContext(_IMounterContext):
         self.logger = logger
 
     async def __aenter__(self) -> str:
-        self.tempdir = tempfile.TemporaryDirectory()
+        self.temp_local_state_dir = tempfile.TemporaryDirectory()
+        self.temp_basedir = tempfile.TemporaryDirectory()
         self.logfile = tempfile.NamedTemporaryFile()
-        out = await check_call_subprocess(self.cryfs_binary, self.basedir, self.tempdir.name,
+        out = await check_call_subprocess(self.cryfs_binary, self.basedir, self.temp_basedir.name,
                                           "--allow-filesystem-upgrade", "--logfile", self.logfile.name,
-                                          "--no-integrity-checks", # TODO With integrity checks, it fails on the second run because it's essentially a rollback. Can we reset cryfs state before running and enable integrity checks?
                                           input=self.password, env={
             "CRYFS_FRONTEND": "noninteractive",
             "CRYFS_NO_UPDATE_CHECK": "true",
+            "CRYFS_LOCAL_STATE_DIR": self.temp_local_state_dir.name,
         })
         if self.logger is not None:
             self.logger.log(LogLevel.INFO, "CryFS stdout:\n%s" % out.stdout.decode('UTF-8'))
             self.logger.log(LogLevel.INFO, "CryFS stderr:\n%s" % out.stderr.decode('UTF-8'))
 
-        return self.tempdir.name
+        return self.temp_basedir.name
 
     async def __aexit__(self, exc_type: Optional[type], exc: Optional[BaseException], tb: Optional[TracebackType]) -> None:
-        await check_call_subprocess("/bin/fusermount", "-u", self.tempdir.name, logger=self.logger, throw_on_error=False)
-        await _wait_until_unmounted(self.tempdir.name)
+        await check_call_subprocess("/bin/fusermount", "-u", self.temp_basedir.name, logger=self.logger, throw_on_error=False)
+        await _wait_until_unmounted(self.temp_basedir.name)
         if self.logger is not None:
             with open(self.logfile.name, 'r') as logfile:
                 self.logger.log(LogLevel.INFO, "CryFS log:\n%s" % logfile.read())
-        self.tempdir.cleanup()
+        self.temp_basedir.cleanup()
+        self.temp_local_state_dir.cleanup()
         self.logfile.close()
 
 
